@@ -21,7 +21,10 @@ public class ExceptionController {
 //            String field = fieldError.getField();
 //            String defaultMessage = fieldError.getDefaultMessage();
 
-        ErrorResponse errorResponse = new ErrorResponse("400", "잘못된 요청입니다.");
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .message("잘못된 요청입니다.")
+                .code("400")
+                .build();
         for (FieldError filedError : e.getFieldErrors()) {
             errorResponse.addValidation(filedError.getField(), filedError.getDefaultMessage());
         }
