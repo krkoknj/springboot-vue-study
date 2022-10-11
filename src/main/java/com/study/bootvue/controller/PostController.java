@@ -1,14 +1,13 @@
 package com.study.bootvue.controller;
 
-import com.study.bootvue.domain.Post;
 import com.study.bootvue.request.PostCreate;
+import com.study.bootvue.response.PostResponse;
 import com.study.bootvue.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -44,13 +43,19 @@ public class PostController {
         return Map.of();
     }*/
 
-    @PostMapping("/v2/posts")
-    public void get(@RequestBody @Valid PostCreate request) throws Exception {
+    @PostMapping("/posts")
+    public void post(@RequestBody @Valid PostCreate request) throws Exception {
         // Case1. 저장한 데이터 Entity -> response로 응답
         // Case2. 저장한 데이터의 primary_id -> response로 응답
         // Case3. 응답 필요없음
 
         postService.write(request);
 
+    }
+
+    @GetMapping("/posts/{postId}")
+    public PostResponse get(@PathVariable(name = "postId") Long id) {
+        PostResponse post = postService.get(id);
+        return post;
     }
 }
