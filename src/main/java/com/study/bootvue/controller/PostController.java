@@ -1,6 +1,7 @@
 package com.study.bootvue.controller;
 
 import com.study.bootvue.request.PostCreate;
+import com.study.bootvue.request.PostSearch;
 import com.study.bootvue.response.PostResponse;
 import com.study.bootvue.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -15,6 +17,7 @@ import javax.validation.Valid;
 public class PostController {
 
     private final PostService postService;
+
 
     /*@PostMapping("/v1/posts")
     public Map<String, String> get(@RequestBody @Valid PostCreate params, BindingResult result) throws Exception {
@@ -55,7 +58,14 @@ public class PostController {
 
     @GetMapping("/posts/{postId}")
     public PostResponse get(@PathVariable(name = "postId") Long id) {
-        PostResponse post = postService.get(id);
-        return post;
+        return postService.get(id);
     }
+
+
+    @GetMapping("/posts")
+    public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
+
+        return postService.getList(postSearch);
+    }
+
 }
