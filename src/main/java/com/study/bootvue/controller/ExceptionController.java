@@ -1,8 +1,10 @@
 package com.study.bootvue.controller;
 
+import com.study.bootvue.exception.WholeException;
 import com.study.bootvue.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -31,4 +33,25 @@ public class ExceptionController {
 
         return errorResponse;
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(WholeException.class)
+    public ResponseEntity<ErrorResponse> wholeException(WholeException e) {
+        String statusCode = e.getStatusCode();
+
+
+        ErrorResponse body = ErrorResponse.builder()
+                .message(e.getMessage())
+                .code(statusCode)
+                .validation(e.getValidation())
+                .build();
+
+
+        ResponseEntity<ErrorResponse> response = ResponseEntity.status(Integer.parseInt(statusCode))
+                .body(body);
+
+        return response;
+    }
+
 }
+

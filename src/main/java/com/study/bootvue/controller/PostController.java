@@ -1,6 +1,7 @@
 package com.study.bootvue.controller;
 
 import com.study.bootvue.request.PostCreate;
+import com.study.bootvue.request.PostEdit;
 import com.study.bootvue.request.PostSearch;
 import com.study.bootvue.response.PostResponse;
 import com.study.bootvue.service.PostService;
@@ -47,10 +48,18 @@ public class PostController {
     }*/
 
     @PostMapping("/posts")
-    public void post(@RequestBody @Valid PostCreate request) throws Exception {
+    public void post(@RequestBody @Valid PostCreate request) {
         // Case1. 저장한 데이터 Entity -> response로 응답
         // Case2. 저장한 데이터의 primary_id -> response로 응답
         // Case3. 응답 필요없음
+
+        // 값을 꺼내와서 체크 하는것은 좋지 않다.
+        /*
+        if (request.getTitle().contains("바보")) {
+            throw new InvalidRequest();
+        }*/
+
+        request.validate();
 
         postService.write(request);
 
@@ -68,4 +77,13 @@ public class PostController {
         return postService.getList(postSearch);
     }
 
+    @PatchMapping("/posts/{postId}")
+    public void edit(@PathVariable Long postId, @RequestBody @Valid PostEdit postEdit) {
+        postService.edit(postId, postEdit);
+    }
+
+    @DeleteMapping("/posts/{postId}")
+    public void delete(@PathVariable Long postId) {
+        postService.delete(postId);
+    }
 }

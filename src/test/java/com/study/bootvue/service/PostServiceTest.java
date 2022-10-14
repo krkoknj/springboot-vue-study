@@ -1,6 +1,7 @@
 package com.study.bootvue.service;
 
 import com.study.bootvue.domain.Post;
+import com.study.bootvue.exception.PostNotFound;
 import com.study.bootvue.repository.PostRepository;
 import com.study.bootvue.request.PostCreate;
 import com.study.bootvue.request.PostEdit;
@@ -16,8 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class PostServiceTest {
@@ -114,6 +114,7 @@ class PostServiceTest {
 
         PostEdit postEdit = PostEdit.builder()
                 .title("제목 수정")
+                .content("내용")
                 .build();
         
         //when
@@ -124,5 +125,129 @@ class PostServiceTest {
                 .orElseThrow(() -> new IllegalArgumentException("글이 존재하지 않습니다. id= " + post.getId()));
 
         assertEquals("제목 수정", changePost.getTitle());
+    }
+
+    @Test
+    @DisplayName("글 제목 수정")
+    public void test5() {
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("제목")
+                .content("내용 수정")
+                .build();
+
+        //when
+        postService.edit(post.getId(), postEdit);
+
+        //then
+        Post changePost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new IllegalArgumentException("글이 존재하지 않습니다. id= " + post.getId()));
+
+        assertEquals("내용 수정", changePost.getContent());
+    }
+
+    @Test
+    @DisplayName("글 내용 수정(바뀔 필드만 가져올때)")
+    public void test6() {
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title(null)
+                .content("내용 수정")
+                .build();
+
+        //when
+        postService.edit(post.getId(), postEdit);
+
+        //then
+        Post changePost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new IllegalArgumentException("글이 존재하지 않습니다. id= " + post.getId()));
+
+        assertEquals("제목", changePost.getTitle());
+        assertEquals("내용 수정", changePost.getContent());
+    }
+
+    @Test
+    @DisplayName("게시글 삭제")
+    public void test7() {
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+        postRepository.save(post);
+
+        //when
+        postService.delete(post.getId());
+
+        //then
+        assertEquals(0, postRepository.count());
+    }
+    
+    @Test
+    @DisplayName("글 1개 조회 - 존재하지 않는 글")
+    public void test8() {
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+        postRepository.save(post);
+        
+        //expected
+        assertThrows(PostNotFound.class, () -> {
+            postService.get(post.getId() + 1L);
+        });
+    }
+    
+    @Test
+    @DisplayName("게시글 삭제 - 존재하지 않는 글")
+    public void test9() {
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+        postRepository.save(post);
+
+        //expected
+        assertThrows(PostNotFound.class, () -> {
+            postService.delete(post.getId() + 1L);
+        });
+    }
+
+    @Test
+    @DisplayName("글 내용 수정 - 존재하지 않는 글")
+    public void test10() {
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("제목")
+                .content("내용 수정")
+                .build();
+
+        //expected
+        assertThrows(PostNotFound.class, () -> {
+            postService.edit(post.getId() + 1L, postEdit);
+        });
     }
 }
