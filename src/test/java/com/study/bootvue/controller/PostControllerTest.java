@@ -185,7 +185,7 @@ class PostControllerTest {
 
     }
 
-    @Test
+    /*@Test
     @DisplayName("페이지를 0으로 요청하면 첫 페이지를 가져온다.")
     public void tes7() throws Exception {
         //given
@@ -211,7 +211,7 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.[0].content").value("내용 30"))
                 .andDo(print());
 
-    }
+    }*/
 
     @Test
     @DisplayName("글 제목 수정")

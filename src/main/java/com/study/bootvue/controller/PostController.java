@@ -58,7 +58,7 @@ public class PostController {
         if (request.getTitle().contains("바보")) {
             throw new InvalidRequest();
         }*/
-
+        log.info("request={}", request.toString());
         request.validate();
 
         postService.write(request);
